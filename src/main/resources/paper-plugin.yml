@@ -1,0 +1,7 @@
+name: FunkyMachines
+version: '${project.version}'
+main: me.youhavetrouble.funkymachines.FunkyMachines
+api-version: '1.20'
+authors: [YouHaveTrouble]
+description: Adds useful machines to your paper server
+website: https://youhavetrouble.me
