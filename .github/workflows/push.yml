@@ -29,4 +29,6 @@ jobs:
           version: ${{ github.ref_name }}-${{ github.sha }}
           version-type: alpha
           game-versions: ">=1.20"
-          loaders: ["paper", "purpur"]
+          loaders: |
+            paper
+            purpur
