@@ -12,23 +12,23 @@ jobs:
           java-version: 17
           distribution: 'temurin'
       - name: Set short commit hash
-        run: fullCommit=${{ github.sha }} && echo "shortCommitHash=${fullCommit:0:8}" >> "$GITHUB_ENV"
+        run: echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
       - name: Build with Maven
-        run: "mvn -B clean package --file pom.xml \"-Drevision=${{ github.ref_name }}-${shortCommitHash}\""
+        run: mvn -B clean package --file pom.xml -Drevision=${{ github.ref_name }}-${{ steps.vars.outputs.sha_short }}
       - name: Copy artifacts
         run: mkdir staging && cp target/FunkyMachines-*.jar staging
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: FunkyMachines-${{ github.ref_name }}-${shortCommitHash}
+          name: FunkyMachines-${{ github.ref_name }}-${{ steps.vars.outputs.sha_short }}
           path: staging
       - uses: Kir-Antipov/mc-publish@v3.3
         with:
           modrinth-id: HYoBPYWG
           modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
           modrinth-files: staging/FunkyMachines-*.jar
-          modrinth-name: ${{ github.ref_name }}-${shortCommitHash}
-          version: ${{ github.ref_name }}-${shortCommitHash}
+          modrinth-name: ${{ github.ref_name }}-${{ steps.vars.outputs.sha_short }}
+          version: ${{ github.ref_name }}-${{ steps.vars.outputs.sha_short }}
           version-type: alpha
           game-versions: ">=1.20"
           loaders: |
