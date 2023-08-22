@@ -20,15 +20,15 @@ jobs:
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: FunkyMachines-${{ github.ref_name }}-${SHORT_SHA}
+          name: FunkyMachines-${{ github.ref_name }}-${{ env.SHORT_SHA }}
           path: staging
       - uses: Kir-Antipov/mc-publish@v3.3
         with:
           modrinth-id: HYoBPYWG
           modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
           modrinth-files: staging/FunkyMachines-*.jar
-          modrinth-name: ${{ github.ref_name }}-${SHORT_SHA}
-          version: ${{ github.ref_name }}-${SHORT_SHA}
+          modrinth-name: ${{ github.ref_name }}-${{ env.SHORT_SHA }}
+          version: ${{ github.ref_name }}-${{ env.SHORT_SHA }}
           version-type: alpha
           game-versions: ">=1.20"
           loaders: |
