@@ -2,14 +2,13 @@ package me.youhavetrouble.funkymachines.listeners;
 
 import me.youhavetrouble.funkymachines.FunkyMachines;
 import me.youhavetrouble.funkymachines.machines.FunkyMachine;
-import org.bukkit.NamespacedKey;
 
 import org.bukkit.block.Block;
-import org.bukkit.block.Dispenser;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.InventoryMoveItemEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.inventory.BlockInventoryHolder;
 
@@ -30,6 +29,16 @@ public class MachineInteractionListener implements Listener {
         event.setCancelled(true);
         if (!(event.getPlayer() instanceof Player player)) return;
         funkyMachine.onInteract(player);
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onMachineInteractedWith(InventoryMoveItemEvent event) {
+        if (!(event.getDestination().getHolder() instanceof BlockInventoryHolder blockInventoryHolder)) return;
+        Block block = blockInventoryHolder.getBlock();
+        FunkyMachine funkyMachine = plugin.getMachine(block);
+        if (funkyMachine == null) return;
+        if (funkyMachine.canBeInteractedWithHopper()) return;
+        event.setCancelled(true);
     }
 
 }

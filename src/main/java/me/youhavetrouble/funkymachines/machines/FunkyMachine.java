@@ -49,6 +49,10 @@ public abstract class FunkyMachine {
      */
     public void onInteract(@NotNull Player player) {}
 
+    public boolean canBeInteractedWithHopper() {
+        return false;
+    }
+
     /**
      * Gets an item that when placed will create this machine
      */
