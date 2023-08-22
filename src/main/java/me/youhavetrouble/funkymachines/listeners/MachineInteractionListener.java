@@ -11,6 +11,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryMoveItemEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.inventory.BlockInventoryHolder;
+import org.bukkit.inventory.InventoryHolder;
 
 public class MachineInteractionListener implements Listener {
 
@@ -32,8 +33,18 @@ public class MachineInteractionListener implements Listener {
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    public void onMachineInteractedWith(InventoryMoveItemEvent event) {
+    public void onItemPushedIntoMachine(InventoryMoveItemEvent event) {
         if (!(event.getDestination().getHolder() instanceof BlockInventoryHolder blockInventoryHolder)) return;
+        Block block = blockInventoryHolder.getBlock();
+        FunkyMachine funkyMachine = plugin.getMachine(block);
+        if (funkyMachine == null) return;
+        if (funkyMachine.canBeInteractedWithHopper()) return;
+        event.setCancelled(true);
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onItemPulledFromMachine(InventoryMoveItemEvent event) {
+        if (!(event.getSource().getHolder() instanceof BlockInventoryHolder blockInventoryHolder)) return;
         Block block = blockInventoryHolder.getBlock();
         FunkyMachine funkyMachine = plugin.getMachine(block);
         if (funkyMachine == null) return;
