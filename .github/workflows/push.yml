@@ -12,7 +12,7 @@ jobs:
           java-version: 17
           distribution: 'temurin'
       - name: Set short commit hash
-        run: fullCommit=${{ github.sha }} && echo "shortCommitHash=${fullCommit:0:8}" >> $GITHUB_OUTPUT
+        run: fullCommit=${{ github.sha }} && echo "sha_short=${fullCommit:0:8}" >> $GITHUB_OUTPUT
       - name: Build with Maven
         run: mvn -B clean package --file pom.xml -Drevision=${{ github.ref_name }}-${{ steps.vars.outputs.sha_short }}
       - name: Copy artifacts
