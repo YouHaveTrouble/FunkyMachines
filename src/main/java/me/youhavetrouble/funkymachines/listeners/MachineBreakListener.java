@@ -16,6 +16,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockDropItemEvent;
 import org.bukkit.event.block.BlockExplodeEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataHolder;
 import org.bukkit.persistence.PersistentDataType;
 
@@ -37,9 +38,11 @@ public class MachineBreakListener implements Listener {
 
         String id = holder.getPersistentDataContainer().get(funkyMachineKey, PersistentDataType.STRING);
         if (id == null) return;
-        Item item = block.getWorld().dropItemNaturally(block.getLocation(), plugin.getMachine(id).onDestroy(state));
         event.getItems().clear();
-        event.getItems().add(item);
+        for (ItemStack itemStack : plugin.getMachine(id).onDestroy(state, event.getPlayer())) {
+            Item item = block.getWorld().dropItemNaturally(block.getLocation(), itemStack);
+            event.getItems().add(item);
+        }
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
@@ -68,7 +71,10 @@ public class MachineBreakListener implements Listener {
         if (id == null) return;
 
         event.getDrops().clear();
-        event.getDrops().add(plugin.getMachine(id).onDestroy(state));
+        for (ItemStack itemStack : plugin.getMachine(id).onDestroy(state, null)) {
+            block.getWorld().dropItemNaturally(block.getLocation(), itemStack);
+            event.getDrops().add(itemStack);
+        }
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
@@ -76,7 +82,9 @@ public class MachineBreakListener implements Listener {
         event.blockList().removeIf(block -> {
             FunkyMachine machine = plugin.getMachine(block);
             if (machine == null) return false;
-            block.getWorld().dropItemNaturally(block.getLocation(), machine.onDestroy(block.getState()));
+            for (ItemStack itemStack : machine.onDestroy(block.getState(), null)) {
+                block.getWorld().dropItemNaturally(block.getLocation(), itemStack);
+            }
             block.setType(Material.AIR, true);
             return true;
         });
@@ -87,7 +95,9 @@ public class MachineBreakListener implements Listener {
         event.blockList().removeIf(block -> {
             FunkyMachine machine = plugin.getMachine(block);
             if (machine == null) return false;
-            block.getWorld().dropItemNaturally(block.getLocation(), machine.onDestroy(block.getState()));
+            for (ItemStack itemStack : machine.onDestroy(block.getState(), null)) {
+                block.getWorld().dropItemNaturally(block.getLocation(), itemStack);
+            }
             block.setType(Material.AIR, true);
             return true;
         });

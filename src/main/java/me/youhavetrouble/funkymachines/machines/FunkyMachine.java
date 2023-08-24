@@ -15,6 +15,9 @@ import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
+import java.util.List;
+
 public abstract class FunkyMachine {
 
     private final String id;
@@ -27,14 +30,21 @@ public abstract class FunkyMachine {
         return id;
     }
 
+    /**
+     * Called when the machine is placed
+     * @param block The block of the machine
+     * @param player The player who placed the machine, or null if the machine was placed by a non-player
+     */
     public void onPlace(@NotNull Block block, @Nullable Player player) {}
 
     /**
      * Called when the machine is destroyed
      * @param blockState The block of the machine
+     * @param player The player who destroyed the machine, or null if the machine was destroyed by a non-player
+     * @return Items that should be dropped when the machine is destroyed
      */
-    public ItemStack onDestroy(@NotNull BlockState blockState) {
-        return getItem();
+    public Collection<ItemStack> onDestroy(@NotNull BlockState blockState, @Nullable Player player) {
+        return List.of(getItem());
     }
 
     /**
@@ -49,7 +59,17 @@ public abstract class FunkyMachine {
      */
     public void onInteract(@NotNull Player player) {}
 
+    /**
+     * Whether this machine can be interacted with by a hopper
+     */
     public boolean canBeInteractedWithHopper() {
+        return false;
+    }
+
+    /**
+     * Wheter this machine should open its default inventory when interacted with
+     */
+    public boolean canBeInteractedWith() {
         return false;
     }
 
@@ -65,6 +85,19 @@ public abstract class FunkyMachine {
         pdc.set(FunkyMachines.getInstance().getFunkyMachineKey(), PersistentDataType.STRING, id);
         item.setItemMeta(meta);
         return item;
+    }
+
+    public enum MachineType {
+        BLOCK_BREAKER("block_breaker");
+
+        private final String id;
+        MachineType(String id) {
+            this.id = id;
+        }
+
+        public String getId() {
+            return id;
+        }
     }
 
 }

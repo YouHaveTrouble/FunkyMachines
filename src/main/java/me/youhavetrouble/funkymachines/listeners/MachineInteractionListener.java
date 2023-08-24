@@ -26,6 +26,7 @@ public class MachineInteractionListener implements Listener {
         Block block = blockInventoryHolder.getBlock();
         FunkyMachine funkyMachine = plugin.getMachine(block);
         if (funkyMachine == null) return;
+        if (funkyMachine.canBeInteractedWith()) return;
         event.setCancelled(true);
         if (!(event.getPlayer() instanceof Player player)) return;
         funkyMachine.onInteract(player);
