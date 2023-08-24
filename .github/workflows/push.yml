@@ -23,16 +23,17 @@ jobs:
           name: FunkyMachines-${{ github.ref_name }}-${{ env.SHORT_SHA }}
           path: staging
       - name: Generate changelog
-        run: git log --pretty=format:"%s" "$BEFORE_REF...$AFTER_REF" >> changelog.txt
+        run: echo "### the following is a list of commit messages between this build and a previous one" >> changelog.txt &&  git log --pretty=format:"%s<br>" "$BEFORE_REF...$AFTER_REF" >> changelog.txt && echo CHANGELOG=`<changelog.txt` >> $GITHUB_ENV
       - uses: Kir-Antipov/mc-publish@v3.3
         with:
           modrinth-id: HYoBPYWG
           modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
           modrinth-files: staging/FunkyMachines-*.jar
           modrinth-name: ${{ github.ref_name }}-${{ env.SHORT_SHA }}
+          modrinth-changelog: ${{ env.CHANGELOG }}
           version: ${{ github.ref_name }}-${{ env.SHORT_SHA }}
           version-type: alpha
-          changelog-file: changelog.txt
+
           game-versions: ">=1.20"
           loaders: |
             paper
