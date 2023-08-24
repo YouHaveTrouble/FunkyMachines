@@ -25,10 +25,7 @@ jobs:
           name: FunkyMachines-${{ github.ref_name }}-${{ env.SHORT_SHA }}
           path: staging
       - name: Generate changelog
-        run: |
-          echo "### the following is a list of commit messages between this build and a previous one" >> changelog.txt 
-          &&  git log --no-merges --pretty=format:"%s<br>" "${{ github.event.before }}...${{ github.event.after }}" >> changelog.txt 
-          && echo CHANGELOG=`<changelog.txt` >> $GITHUB_ENV
+        run: echo "### the following is a list of commit messages between this build and a previous one" >> changelog.txt &&  git log --no-merges --pretty=format:"%s<br>" "${{ github.event.before }}...${{ github.event.after }}" >> changelog.txt && echo CHANGELOG=`<changelog.txt` >> $GITHUB_ENV
       - uses: Kir-Antipov/mc-publish@v3.3
         with:
           modrinth-id: HYoBPYWG
