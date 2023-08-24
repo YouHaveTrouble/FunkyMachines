@@ -11,6 +11,7 @@ jobs:
         with:
           java-version: 17
           distribution: 'temurin'
+          fetch-depth: 0
       - name: Set short commit hash
         run: fullCommit=${{ github.sha }} && echo "SHORT_SHA=${fullCommit:0:8}" >> $GITHUB_ENV
       - name: Build with Maven
