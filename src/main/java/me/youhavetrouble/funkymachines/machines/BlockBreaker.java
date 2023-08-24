@@ -1,6 +1,6 @@
 package me.youhavetrouble.funkymachines.machines;
 
-import io.papermc.paper.event.block.BlockBreakBlockEvent;
+import me.youhavetrouble.funkymachines.events.FunkyMachineBlockBreakEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -13,7 +13,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.Collection;
 
 public class BlockBreaker extends FunkyMachine {
@@ -47,13 +46,18 @@ public class BlockBreaker extends FunkyMachine {
         if (targetBlock.getType() == Material.BEDROCK) return;
 
         Collection<ItemStack> drops = targetBlock.getDrops(pickToBreakWith);
-        BlockBreakBlockEvent event = new BlockBreakBlockEvent(targetBlock, block, new ArrayList<>(drops));
-        Bukkit.getPluginManager().callEvent(event);
-        for (ItemStack item : event.getDrops()) {
+
+        if (FunkyMachineBlockBreakEvent.getHandlerList().getRegisteredListeners().length > 0) {
+            FunkyMachineBlockBreakEvent funkyMachineBlockBreakEvent = new FunkyMachineBlockBreakEvent(getId(), targetBlock);
+            Bukkit.getPluginManager().callEvent(funkyMachineBlockBreakEvent);
+            if (funkyMachineBlockBreakEvent.isCancelled()) return;
+        }
+
+        targetBlock.setType(Material.AIR, true);
+        for (ItemStack item : drops) {
             if (item.getAmount() < 0) continue;
             targetBlock.getWorld().dropItemNaturally(targetBlock.getLocation(), item);
         }
-        targetBlock.setType(Material.AIR, true);
     }
 
 }
